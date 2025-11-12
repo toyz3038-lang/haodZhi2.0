@@ -80,3 +80,5 @@ const LoanGuidelines = () => {
 
 export default LoanGuidelines;
 
+
+

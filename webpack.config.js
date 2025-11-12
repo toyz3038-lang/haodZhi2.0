@@ -1,12 +1,14 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
+    publicPath: './', // ✅ 讓所有資源（圖、CSS、JS）走相對路徑
     clean: true,
   },
   module: {
@@ -23,11 +25,14 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'postcss-loader',
-        ],
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)$/i, // ✅ 支援圖片 import
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[name][ext]', // 打包時會放到 dist/images/
+        },
       },
     ],
   },
@@ -36,23 +41,23 @@ module.exports = {
       template: './public/index.html',
       filename: 'index.html',
     }),
-    new Dotenv({
-      path: './.env', // 指定 .env 文件路徑
-      safe: false, // 如果沒有 .env 文件也不報錯
-      systemvars: true, // 允許讀取系統環境變數
-      defaults: false, // 不使用 .env.example
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public', to: '.', globOptions: { ignore: ['**/index.html'] } }
+      ],
+    }),    
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env),
     }),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
   },
   devServer: {
-    static: {
-      directory: path.join(__dirname, 'public'),
-    },
+    static: { directory: path.join(__dirname, 'public') },
+    historyApiFallback: true,
     compress: true,
     port: 3000,
     hot: true,
-    historyApiFallback: true,
   },
 };
