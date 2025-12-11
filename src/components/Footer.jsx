@@ -84,7 +84,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 underline"
                 >
-                  新北市樹林區中山路三段271號
+                  新北市樹林區中山路三段273號
                 </a>
               </div>
             </div>
